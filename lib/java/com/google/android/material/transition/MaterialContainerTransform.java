@@ -879,6 +879,11 @@ public final class MaterialContainerTransform extends Transition {
     return transitionShapeAppearanceResId;
   }
 
+  @Override
+  public boolean isSeekingSupported() {
+    return true;
+  }
+
   @Nullable
   @Override
   public Animator createAnimator(
