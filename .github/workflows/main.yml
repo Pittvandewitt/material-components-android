@@ -13,7 +13,7 @@ on:
         options:
         - 'publishToMavenLocal'
         - 'assembleRelease'
-        default: 'assembleRelease'
+        default: 'publishToMavenLocal'
 
 jobs:
   build:
@@ -46,14 +46,12 @@ jobs:
         fi
       
     - name: Upload Maven Local Repository
-      if: github.event.inputs.build_type == 'publishToMavenLocal'
       uses: actions/upload-artifact@v4
       with:
         name: maven-local-repo
         path: ~/.m2/repository/
         
     - name: Upload AAR
-      if: github.event.inputs.build_type == 'assembleRelease'
       uses: actions/upload-artifact@v4
       with:
         name: release-aar
