@@ -51,6 +51,9 @@ public final class LinearProgressIndicatorSpec extends BaseProgressIndicatorSpec
   /** The size of the stop indicator at the end of the track. */
   @Px public int trackStopIndicatorSize;
 
+  /** The padding of the stop indicator at the end of the track. */
+  @Nullable public Integer trackStopIndicatorPadding;
+
   @Px public int trackInnerCornerRadius;
   public float trackInnerCornerRadiusFraction;
   public boolean useRelativeTrackInnerCornerRadius;
@@ -102,6 +105,10 @@ public final class LinearProgressIndicatorSpec extends BaseProgressIndicatorSpec
         min(
             a.getDimensionPixelSize(R.styleable.LinearProgressIndicator_trackStopIndicatorSize, 0),
             trackThickness);
+    if (a.hasValue(R.styleable.LinearProgressIndicator_trackStopIndicatorPadding)) {
+      trackStopIndicatorPadding =
+          a.getDimensionPixelSize(R.styleable.LinearProgressIndicator_trackStopIndicatorPadding, 0);
+    }
     TypedValue trackInnerCornerRadiusValue =
         a.peekValue(R.styleable.LinearProgressIndicator_trackInnerCornerRadius);
     if (trackInnerCornerRadiusValue != null) {
@@ -130,10 +137,15 @@ public final class LinearProgressIndicatorSpec extends BaseProgressIndicatorSpec
 
   public int getTrackInnerCornerRadiusInPx() {
     return !hasInnerCornerRadius
-        ? trackCornerRadius
+        ? getTrackCornerRadiusInPx()
         : useRelativeTrackInnerCornerRadius
             ? (int) (trackThickness * trackInnerCornerRadiusFraction)
             : trackInnerCornerRadius;
+  }
+
+  @Override
+  public boolean useStrokeCap() {
+    return super.useStrokeCap() && getTrackInnerCornerRadiusInPx() == getTrackCornerRadiusInPx();
   }
 
   @Override
@@ -145,7 +157,8 @@ public final class LinearProgressIndicatorSpec extends BaseProgressIndicatorSpec
     }
     if (indeterminateAnimationType
         == LinearProgressIndicator.INDETERMINATE_ANIMATION_TYPE_CONTIGUOUS) {
-      if ((trackCornerRadius > 0 || (hasInnerCornerRadius && getTrackInnerCornerRadiusInPx() > 0))
+      if ((getTrackCornerRadiusInPx() > 0
+              || (hasInnerCornerRadius && getTrackInnerCornerRadiusInPx() > 0))
           && indicatorTrackGapSize == 0) {
         // Throws an exception if trying to use the cornered indicator/track with contiguous
         // indeterminate animation type without gap.

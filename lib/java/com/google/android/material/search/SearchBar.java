@@ -20,6 +20,7 @@ import com.google.android.material.R;
 
 import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static com.google.android.material.theme.overlay.MaterialThemeOverlay.wrap;
+import static java.lang.Math.max;
 
 import android.animation.AnimatorListenerAdapter;
 import android.content.Context;
@@ -35,13 +36,12 @@ import android.os.Build.VERSION_CODES;
 import android.os.Parcel;
 import android.os.Parcelable;
 import androidx.appcompat.content.res.AppCompatResources;
-import androidx.appcompat.view.menu.MenuBuilder;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
@@ -138,12 +138,15 @@ public class SearchBar extends Toolbar {
   private final Drawable defaultNavigationIcon;
   private final boolean tintNavigationIcon;
   private final boolean forceDefaultNavigationOnClickListener;
+  private final int minimumTextMarginStart;
+  private int currentTextMarginStart;
   @Nullable private View centerView;
   @Nullable private Integer navigationIconTint;
   @Nullable private Drawable originalNavigationIconBackground;
   private int menuResId = -1;
   private boolean defaultScrollFlagsEnabled;
   private MaterialShapeDrawable backgroundShape;
+  private boolean textCentered;
 
   public SearchBar(@NonNull Context context) {
     this(context, null);
@@ -159,6 +162,9 @@ public class SearchBar extends Toolbar {
     context = getContext();
     validateAttributes(attrs);
 
+    minimumTextMarginStart =
+        getResources()
+            .getDimensionPixelSize(R.dimen.m3_searchbar_text_margin_start_no_navigation_icon);
     defaultNavigationIcon =
         AppCompatResources.getDrawable(context, getDefaultNavigationIconResource());
     searchBarAnimationHelper = new SearchBarAnimationHelper();
@@ -185,6 +191,7 @@ public class SearchBar extends Toolbar {
     String hint = a.getString(R.styleable.SearchBar_android_hint);
     float strokeWidth = a.getDimension(R.styleable.SearchBar_strokeWidth, -1);
     int strokeColor = a.getColor(R.styleable.SearchBar_strokeColor, Color.TRANSPARENT);
+    textCentered = a.getBoolean(R.styleable.SearchBar_textCentered, false);
 
     a.recycle();
 
@@ -234,10 +241,7 @@ public class SearchBar extends Toolbar {
     }
     setText(text);
     setHint(hint);
-    if (getNavigationIcon() == null) {
-      ((MarginLayoutParams) textView.getLayoutParams()).setMarginStart(getResources()
-          .getDimensionPixelSize(R.dimen.m3_searchbar_text_margin_start_no_navigation_icon));
-    }
+    setTextCentered(textCentered);
   }
 
   private void initBackground(
@@ -253,7 +257,8 @@ public class SearchBar extends Toolbar {
       backgroundShape.setStroke(strokeWidth, strokeColor);
     }
 
-    int rippleColor = MaterialColors.getColor(this, R.attr.colorControlHighlight);
+    int rippleColor =
+        MaterialColors.getColor(this, androidx.appcompat.R.attr.colorControlHighlight);
     Drawable background;
     backgroundShape.setFillColor(ColorStateList.valueOf(backgroundColor));
     background =
@@ -363,16 +368,8 @@ public class SearchBar extends Toolbar {
 
   @Override
   public void inflateMenu(@MenuRes int resId) {
-    // Pause dispatching item changes during inflation to improve performance.
-    Menu menu = getMenu();
-    if (menu instanceof MenuBuilder) {
-      ((MenuBuilder) menu).stopDispatchingItemsChanged();
-    }
     super.inflateMenu(resId);
     this.menuResId = resId;
-    if (menu instanceof MenuBuilder) {
-      ((MenuBuilder) menu).startDispatchingItemsChanged();
-    }
   }
 
   @Override
@@ -388,6 +385,36 @@ public class SearchBar extends Toolbar {
 
     layoutCenterView();
     setHandwritingBoundsInsets();
+    // If after laying out, there's not enough space between the textview and the start of
+    // the searchbar, we add a margin.
+    if (textView != null) {
+      Toolbar.LayoutParams lp = (LayoutParams) textView.getLayoutParams();
+      int currentMargin = lp.getMarginStart();
+      int newMargin = getNewMargin(currentMargin);
+      if (currentMargin != newMargin) {
+        lp.setMarginStart(newMargin);
+        currentTextMarginStart = newMargin;
+        textView.setLayoutParams(lp);
+      }
+    }
+  }
+
+  private int getNewMargin(int currentMargin) {
+    // The start position of the textview with respect to its parent, the searchbar.
+    int textViewStart =
+        getLayoutDirection() == LAYOUT_DIRECTION_RTL
+            ? getMeasuredWidth() - textView.getRight()
+            : textView.getLeft();
+    int additionalMarginStart = max(minimumTextMarginStart - textViewStart, 0);
+    // If we are already including the margin in the textview start, and it is necessary to be added
+    // (ie. keeping the desired distance between the textview and the start), we should keep
+    // the margin.
+    if (currentTextMarginStart != 0
+        && currentMargin == currentTextMarginStart
+        && (textViewStart - currentMargin) < minimumTextMarginStart) {
+      additionalMarginStart = currentMargin;
+    }
+    return additionalMarginStart;
   }
 
   @Override
@@ -562,6 +589,28 @@ public class SearchBar extends Toolbar {
   /** Sets the text of main {@link TextView}. */
   public void setText(@StringRes int textResId) {
     textView.setText(textResId);
+  }
+
+  /** Whether or not to center the text. */
+  public void setTextCentered(boolean textCentered) {
+    this.textCentered = textCentered;
+    if (textView == null) {
+      return;
+    }
+    Toolbar.LayoutParams lp = (LayoutParams) textView.getLayoutParams();
+    if (textCentered) {
+      textView.setGravity(Gravity.CENTER_HORIZONTAL);
+      lp.gravity = Gravity.CENTER_HORIZONTAL;
+    } else {
+      textView.setGravity(Gravity.NO_GRAVITY);
+      lp.gravity = Gravity.NO_GRAVITY;
+    }
+    textView.setLayoutParams(lp);
+  }
+
+  /** Whether or not the text is centered. */
+  public boolean getTextCentered() {
+    return textCentered;
   }
 
   /** Clears the text of main {@link TextView}. */

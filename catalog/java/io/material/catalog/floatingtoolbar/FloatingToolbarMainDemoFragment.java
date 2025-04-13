@@ -144,7 +144,6 @@ public class FloatingToolbarMainDemoFragment extends DemoFragment {
 
     // Select bottom configuration button to represent the toolbar that's initially visible.
     view.findViewById(R.id.bottom_button).performClick();
-
     return view;
   }
 

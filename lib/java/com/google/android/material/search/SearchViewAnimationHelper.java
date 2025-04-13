@@ -30,12 +30,14 @@ import android.os.Build.VERSION_CODES;
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable;
 import androidx.appcompat.widget.ActionMenuView;
 import androidx.appcompat.widget.Toolbar;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup.MarginLayoutParams;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.activity.BackEventCompat;
 import androidx.annotation.NonNull;
@@ -92,6 +94,7 @@ class SearchViewAnimationHelper {
   private final FrameLayout toolbarContainer;
   private final Toolbar toolbar;
   private final Toolbar dummyToolbar;
+  private final LinearLayout textContainer;
   private final TextView searchPrefix;
   private final EditText editText;
   private final ImageButton clearButton;
@@ -116,6 +119,7 @@ class SearchViewAnimationHelper {
     this.clearButton = searchView.clearButton;
     this.divider = searchView.divider;
     this.contentContainer = searchView.contentContainer;
+    this.textContainer = searchView.textContainer;
 
     backHelper = new MaterialMainContainerBackHelper(rootView);
   }
@@ -454,9 +458,23 @@ class SearchViewAnimationHelper {
     if (searchView.isAnimatedNavigationIcon()) {
       addDrawerArrowDrawableAnimatorIfNeeded(animatorSet, drawable);
       addFadeThroughDrawableAnimatorIfNeeded(animatorSet, drawable);
+      addBackButtonAnimatorIfNeeded(animatorSet, backButton);
     } else {
       setFullDrawableProgressIfNeeded(drawable);
     }
+  }
+
+  private void addBackButtonAnimatorIfNeeded(AnimatorSet animatorSet, ImageButton backButton) {
+    // If there's no navigation icon on the search bar, we should set the alpha for the button
+    // itself instead of the drawables since the button background has a ripple.
+    if (searchBar == null || searchBar.getNavigationIcon() != null) {
+      return;
+    }
+
+    ValueAnimator animator = ValueAnimator.ofFloat(0, 1);
+    animator.addUpdateListener(
+        animation -> backButton.setAlpha((Float) animation.getAnimatedValue()));
+    animatorSet.playTogether(animator);
   }
 
   private void addDrawerArrowDrawableAnimatorIfNeeded(AnimatorSet animatorSet, Drawable drawable) {
@@ -507,11 +525,19 @@ class SearchViewAnimationHelper {
   }
 
   private Animator getDummyToolbarAnimator(boolean show) {
-    return getTranslationAnimator(show, false, dummyToolbar);
+    return getTranslationAnimator(
+        show,
+        dummyToolbar,
+        getFromTranslationXEnd(dummyToolbar),
+        getFromTranslationY());
   }
 
   private Animator getHeaderContainerAnimator(boolean show) {
-    return getTranslationAnimator(show, false, headerContainer);
+    return getTranslationAnimator(
+        show,
+        headerContainer,
+        getFromTranslationXEnd(headerContainer),
+        getFromTranslationY());
   }
 
   private Animator getActionMenuViewsAlphaAnimator(boolean show) {
@@ -531,11 +557,33 @@ class SearchViewAnimationHelper {
   }
 
   private Animator getSearchPrefixAnimator(boolean show) {
-    return getTranslationAnimator(show, true, searchPrefix);
+    return getTranslationAnimatorForText(show, searchPrefix);
   }
 
   private Animator getEditTextAnimator(boolean show) {
-    return getTranslationAnimator(show, true, editText);
+    return getTranslationAnimatorForText(show, editText);
+  }
+
+  private Animator getTranslationAnimatorForText(boolean show, View v) {
+    TextView textView = searchBar.getTextView();
+    int additionalMovement = 0;
+    // If the text is centered and the text's hint is not equal to the text (ie. if there's any
+    // extra space in between the textview's start and the actual text bounds)
+    if (!TextUtils.isEmpty(textView.getText())
+        && searchBar.getTextCentered()
+        && textView.getHint() != textView.getText()) {
+      String text = textView.getText().toString();
+      Rect bounds = new Rect();
+
+      textView.getPaint().getTextBounds(text, 0, text.length(), bounds);
+      additionalMovement = max(0, searchBar.getTextView().getMeasuredWidth() / 2 - bounds.width() / 2);
+    }
+    int startX =
+        searchBar.getTextView().getLeft()
+            + additionalMovement
+            + searchBar.getLeft()
+            - (v.getLeft() + textContainer.getLeft());
+    return getTranslationAnimator(show, v, startX, getFromTranslationY());
   }
 
   private Animator getContentAnimator(boolean show) {
@@ -581,12 +629,11 @@ class SearchViewAnimationHelper {
     return animatorScale;
   }
 
-  private Animator getTranslationAnimator(boolean show, boolean anchoredToStart, View view) {
-    int startX = anchoredToStart ? getFromTranslationXStart(view) : getFromTranslationXEnd(view);
+  private Animator getTranslationAnimator(boolean show, View view, int startX, int startY) {
     ValueAnimator animatorX = ValueAnimator.ofFloat(startX, 0);
     animatorX.addUpdateListener(MultiViewUpdateListener.translationXListener(view));
 
-    ValueAnimator animatorY = ValueAnimator.ofFloat(getFromTranslationY(), 0);
+    ValueAnimator animatorY = ValueAnimator.ofFloat(startY, 0);
     animatorY.addUpdateListener(MultiViewUpdateListener.translationYListener(view));
 
     AnimatorSet animatorSet = new AnimatorSet();
@@ -613,8 +660,12 @@ class SearchViewAnimationHelper {
   }
 
   private int getFromTranslationY() {
-    int toolbarMiddleY = (toolbarContainer.getTop() + toolbarContainer.getBottom()) / 2;
-    int searchBarMiddleY = (searchBar.getTop() + searchBar.getBottom()) / 2;
+    int toolbarMiddleY = toolbarContainer.getTop() + toolbarContainer.getMeasuredHeight() / 2;
+    int parentTop = searchBar.getParent() != null ? ((View) searchBar.getParent()).getTop() : 0;
+    int searchBarMiddleY =
+        searchBar.getTop()
+            + parentTop
+            + searchBar.getMeasuredHeight() / 2;
     return searchBarMiddleY - toolbarMiddleY;
   }
 

@@ -33,7 +33,6 @@ import androidx.annotation.LayoutRes;
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import com.google.android.material.dockedtoolbar.DockedToolbarLayout;
 import com.google.android.material.snackbar.Snackbar;
 import io.material.catalog.feature.DemoFragment;
@@ -72,14 +71,25 @@ public class DockedToolbarMainDemoFragment extends DemoFragment {
 
     if (VERSION.SDK_INT >= VERSION_CODES.M) {
       AccessibilityManager am = getContext().getSystemService(AccessibilityManager.class);
-      if (am != null && am.isTouchExplorationEnabled()) {
-        ((CoordinatorLayout.LayoutParams) dockedToolbar.getLayoutParams()).setBehavior(null);
-        dockedToolbar.post(
-            () -> bodyContainer.setPadding(0, 0, 0, dockedToolbar.getMeasuredHeight()));
+      if (am != null) {
+        am.addTouchExplorationStateChangeListener(enabled -> updateContentPaddingOnTalkback(bodyContainer, enabled));
+        if (am.isTouchExplorationEnabled()) {
+          updateContentPaddingOnTalkback(bodyContainer, /* talkbackEnabled= */ true);
+        }
       }
     }
 
     return view;
+  }
+
+  private void updateContentPaddingOnTalkback(View content, boolean talkbackEnabled) {
+    dockedToolbar.post(
+        () ->
+            content.setPadding(
+                /* left= */ 0,
+                /* top= */ 0,
+                /* right= */ 0,
+                talkbackEnabled ? dockedToolbar.getMeasuredHeight() : 0));
   }
 
   private void showMenu(View v, @MenuRes int menuRes) {
