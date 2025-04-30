@@ -64,11 +64,9 @@ class TransitionUtils {
      * @param view      The view to create a copy of.
      * @param parent    The parent of view.
      */
-    static View copyViewImage(ViewGroup sceneRoot, View view, View parent) {
+    static View copyViewImage(View view) {
         Matrix matrix = new Matrix();
-        matrix.setTranslate(-parent.getScrollX(), -parent.getScrollY());
-        ViewUtils.transformMatrixToGlobal(view, matrix);
-        ViewUtils.transformMatrixToLocal(sceneRoot, matrix);
+        matrix.setTranslate(-view.getScrollX(), -view.getScrollY());
         RectF bounds = new RectF(0, 0, view.getWidth(), view.getHeight());
         matrix.mapRect(bounds);
         int left = Math.round(bounds.left);
