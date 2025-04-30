@@ -52,22 +52,15 @@ class TransitionUtils {
   static final int NO_DURATION = -1;
   @AttrRes static final int NO_ATTR_RES_ID = 0;
 
+  private static final int MAX_IMAGE_SIZE = 1024 * 1024;
+  
   // Constants corresponding to motionPath theme attr enum values.
   private static final int PATH_TYPE_LINEAR = 0;
   private static final int PATH_TYPE_ARC = 1;
 
   private TransitionUtils() {}
 
-  
-    /**
-     * Creates a View using the bitmap copy of <code>view</code>. If <code>view</code> is large,
-     * the copy will use a scaled bitmap of the given view.
-     *
-     * @param sceneRoot The ViewGroup in which the view copy will be displayed.
-     * @param view      The view to create a copy of.
-     * @param parent    The parent of view.
-     */
-    static View copyViewImage(View view) {
+  static View copyViewImage(View view) {
         Matrix matrix = new Matrix();
         matrix.setTranslate(-view.getScrollX(), -view.getScrollY());
         RectF bounds = new RectF(0, 0, view.getWidth(), view.getHeight());
@@ -87,6 +80,24 @@ class TransitionUtils {
         copy.measure(widthSpec, heightSpec);
         copy.layout(left, top, right, bottom);
         return copy;
+    }
+
+  private static Bitmap createViewBitmap(View view, Matrix matrix, RectF bounds) {
+        Bitmap bitmap = null;
+        int bitmapWidth = Math.round(bounds.width());
+        int bitmapHeight = Math.round(bounds.height());
+        if (bitmapWidth > 0 && bitmapHeight > 0) {
+            float scale = Math.min(1f, ((float) MAX_IMAGE_SIZE) / (bitmapWidth * bitmapHeight));
+            bitmapWidth = (int) (bitmapWidth * scale);
+            bitmapHeight = (int) (bitmapHeight * scale);
+            matrix.postTranslate(-bounds.left, -bounds.top);
+            matrix.postScale(scale, scale);
+            bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.concat(matrix);
+            view.draw(canvas);
+        }
+        return bitmap;
     }
   
   static boolean maybeApplyThemeInterpolator(
