@@ -26,6 +26,7 @@ and make choices, with a single tap.
 *   [Button groups](#button-groups)
 *   [Toggle button group](#toggle-button-groups)
 *   [Icon button](#icon-button)
+*   [Optical centering](#optical-centering)
 *   [Theming](#theming-buttons)
 
 ## Design and API Documentation
@@ -748,6 +749,139 @@ Element           | Style                                  | Theme Attribute
 ----------------- | -------------------------------------- | ---------------
 **Default style** | `Widget.Material3.MaterialButtonGroup` | `?attr/materialButtonGroupStyle`
 
+### Making button groups adaptive
+
+`MaterialButtonGroup` inherits from the `LinearLayout`. It can be configured to
+achieve different child arrangements for different screen sizes or foldable
+screens by using `layout_width` and `layout_weight`.
+
+#### Fixed button sizes
+
+When child buttons should not be adjusted while screen size changes, consider
+using `layout_width` on all buttons.
+
+![Button group with fixed arrangement](assets/buttons/group_arrangement_fixed.png)
+
+```xml
+<com.google.android.material.button.MaterialButtonGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:gravity="center_horizontal"
+    android:spacing="4dp">
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cat_button_previous_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_previous_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cat_button_play_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_play_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cat_button_next_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_next_icon"/>
+</com.google.android.material.button.MaterialButtonGroup>
+```
+
+#### Flexible button sizes
+
+When all child buttons are equally important or their sizes are proportional to
+each other, consider using `layout_weight` on all buttons.
+
+![Button group with flexible arrangement](assets/buttons/group_arrangement_flexible.png)
+
+```xml
+<com.google.android.material.button.MaterialButtonGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:gravity="center_horizontal"
+    android:spacing="4dp">
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/cat_button_previous_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_previous_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:contentDescription="@string/cat_button_play_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_play_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:contentDescription="@string/cat_button_next_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_next_icon"/>
+</com.google.android.material.button.MaterialButtonGroup>
+```
+
+#### Mixed button sizes
+
+When only some buttons are flexible for different screen sizes, consider using
+`layout_weight` on these buttons but use `layout_width` on the rest as below.
+
+![Button group with mixed arrangement](assets/buttons/group_arrangement_mixed.png)
+
+```xml
+<com.google.android.material.button.MaterialButtonGroup
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingBottom="8dp"
+    android:gravity="center_horizontal"
+    android:spacing="4dp">
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cat_button_previous_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_previous_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:contentDescription="@string/cat_button_play_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_play_icon"/>
+    <Button
+        style="?attr/materialIconButtonFilledStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:contentDescription="@string/cat_button_next_icon"
+        android:gravity="center"
+        app:iconGravity="textStart"
+        app:icon="@drawable/cat_button_next_icon"/>
+</com.google.android.material.button.MaterialButtonGroup>
+```
+
 ### Split button
 
 A specialized type of the connected button group is the split button. The
@@ -768,26 +902,70 @@ trailing icon button that has an AnimatedVectorDrawable.
 In the layout:
 
 ```xml
-  <com.google.android.material.button.MaterialSplitButton
-  xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:id="@+id/splitbutton"
-  android:layout_width="wrap_content"
-  android:layout_height="wrap_content">
+<com.google.android.material.button.MaterialSplitButton
+    android:id="@+id/splitbutton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
     <Button
-          android:layout_width="wrap_content"
-          android:layout_height="wrap_content"
-          android:text="@string/split_button_label"
-          app:icon="@drawable/ic_edit_vd_theme_24dp"/>
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:paddingStart="@dimen/m3_comp_split_button_small_leading_button_leading_space"
+        android:paddingEnd="@dimen/m3_comp_split_button_small_leading_button_trailing_space"
+        android:minWidth="@dimen/mtrl_min_touch_target_size"
+        android:text="@string/cat_split_button_label"
+        app:icon="@drawable/ic_edit_vd_theme_24dp"
+        app:iconSize="20dp"
+    />
     <Button
-          style="?attr/materialSplitButtonIconFilledStyle"
-          android:id="@+id/expand_more_or_less"
-          android:layout_height="wrap_content"
-          android:layout_width="wrap_content"
-          android:minWidth="48dp"
-          android:gravity="center"
-          android:contentDescription="@string/split_button_label_chevron"
-          app:icon="@drawable/m3_split_button_chevron_avd"/>
+        style="?attr/materialSplitButtonIconFilledStyle"
+        android:id="@+id/expand_more_or_less_filled"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:minWidth="@dimen/mtrl_min_touch_target_size"
+        android:contentDescription="@string/cat_split_button_label_chevron"
+        app:icon="@drawable/m3_split_button_chevron_avd"
+    />
+</com.google.android.material.button.MaterialSplitButton>
+```
+
+The following example shows a split button with a leading icon button and a
+trailing icon button that has an AnimatedVectorDrawable.
+
+In the layout:
+
+```xml
+<com.google.android.material.button.MaterialSplitButton
+    android:id="@+id/splitbutton"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content">
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="6dp"
+        android:paddingBottom="6dp"
+        android:paddingStart="@dimen/m3_comp_split_button_small_leading_button_leading_space"
+        android:paddingEnd="@dimen/m3_comp_split_button_small_leading_button_trailing_space"
+        android:minWidth="@dimen/mtrl_min_touch_target_size"
+        android:contentDescription="@string/cat_split_button_label_edit"
+        app:icon="@drawable/ic_edit_vd_theme_24dp"
+        app:iconSize="20dp"
+        app:iconPadding="0dp"
+    />
+    <Button
+        style="?attr/materialSplitButtonIconFilledStyle"
+        android:id="@+id/expand_more_or_less_filled_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:minWidth="@dimen/mtrl_min_touch_target_size"
+        android:contentDescription="@string/cat_split_button_label_chevron"
+        app:icon="@drawable/m3_split_button_chevron_avd"
+    />
 </com.google.android.material.button.MaterialSplitButton>
 ```
 
@@ -1171,6 +1349,19 @@ See the full list of
 [styles](https://github.com/material-components/material-components-android/tree/master/lib/java/com/google/android/material/button/res/values/styles.xml)
 and
 [attrs](https://github.com/material-components/material-components-android/tree/master/lib/java/com/google/android/material/button/res/values/attrs.xml).
+
+## Optical Centering
+
+Optical centering means to offset the `MaterialButton`’s contents (icon and/or
+label) when the shape is asymmetric. Before optical centering, we only provided
+centering with horizontally asymmetrical shapes.
+
+To turn on optical centering for a given button, use
+`setOpticalCenterEnabled(true)`. Optical centering is disabled by default. When
+enabled, the shift amount of the icon and/or text is calculated as a value with
+the fixed ratio to the difference between left corner size in dp and right
+corner size in dp. The shift amount is applied to the padding start and padding
+end.
 
 ## Theming buttons
 

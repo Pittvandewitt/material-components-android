@@ -44,6 +44,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -55,6 +56,7 @@ import androidx.annotation.DrawableRes;
 import androidx.annotation.MenuRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.Px;
 import androidx.annotation.RestrictTo;
 import androidx.annotation.StringRes;
 import androidx.annotation.StyleRes;
@@ -63,9 +65,11 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import androidx.core.widget.TextViewCompat;
 import androidx.customview.view.AbsSavedState;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.AppBarLayout.LiftOnScrollProgressListener;
 import com.google.android.material.color.MaterialColors;
 import com.google.android.material.internal.ThemeEnforcement;
 import com.google.android.material.internal.ToolbarUtils;
+import com.google.android.material.resources.MaterialResources;
 import com.google.android.material.shape.MaterialShapeDrawable;
 import com.google.android.material.shape.MaterialShapeUtils;
 import com.google.android.material.shape.ShapeAppearanceModel;
@@ -132,6 +136,10 @@ public class SearchBar extends Toolbar {
   private static final String NAMESPACE_APP = "http://schemas.android.com/apk/res-auto";
 
   private final TextView textView;
+  private final int backgroundColor;
+
+  private boolean liftOnScroll;
+  @Nullable private final ColorStateList liftOnScrollColor;
   private final boolean layoutInflated;
   private final boolean defaultMarginsEnabled;
   private final SearchBarAnimationHelper searchBarAnimationHelper;
@@ -147,6 +155,21 @@ public class SearchBar extends Toolbar {
   private boolean defaultScrollFlagsEnabled;
   private MaterialShapeDrawable backgroundShape;
   private boolean textCentered;
+  private int maxWidth;
+  @Nullable private ActionMenuView menuView;
+
+  private final LiftOnScrollProgressListener liftColorListener =
+      new LiftOnScrollProgressListener() {
+
+        @Override
+        public void onUpdate(float elevation, int appBarLayoutColor, float progress) {
+          if (liftOnScrollColor != null) {
+            int mixedColor =
+                MaterialColors.layer(backgroundColor, liftOnScrollColor.getDefaultColor(), progress);
+            backgroundShape.setFillColor(ColorStateList.valueOf(mixedColor));
+          }
+        }
+      };
 
   public SearchBar(@NonNull Context context) {
     this(context, null);
@@ -175,7 +198,9 @@ public class SearchBar extends Toolbar {
 
     ShapeAppearanceModel shapeAppearanceModel =
         ShapeAppearanceModel.builder(context, attrs, defStyleAttr, DEF_STYLE_RES).build();
-    int backgroundColor = a.getColor(R.styleable.SearchBar_backgroundTint, 0);
+    backgroundColor = a.getColor(R.styleable.SearchBar_backgroundTint, 0);
+    liftOnScrollColor =
+        MaterialResources.getColorStateList(context, a, R.styleable.SearchBar_liftOnScrollColor);
     float elevation = a.getDimension(R.styleable.SearchBar_elevation, 0);
     defaultMarginsEnabled = a.getBoolean(R.styleable.SearchBar_defaultMarginsEnabled, true);
     defaultScrollFlagsEnabled = a.getBoolean(R.styleable.SearchBar_defaultScrollFlagsEnabled, true);
@@ -192,6 +217,8 @@ public class SearchBar extends Toolbar {
     float strokeWidth = a.getDimension(R.styleable.SearchBar_strokeWidth, -1);
     int strokeColor = a.getColor(R.styleable.SearchBar_strokeColor, Color.TRANSPARENT);
     textCentered = a.getBoolean(R.styleable.SearchBar_textCentered, false);
+    liftOnScroll = a.getBoolean(R.styleable.SearchBar_liftOnScroll, false);
+    maxWidth = a.getDimensionPixelSize(R.styleable.SearchBar_android_maxWidth, -1);
 
     a.recycle();
 
@@ -223,6 +250,18 @@ public class SearchBar extends Toolbar {
       throw new UnsupportedOperationException(
           "SearchBar does not support subtitle. Use hint or text instead.");
     }
+  }
+
+  @Nullable
+  private AppBarLayout getAppBarLayoutParentIfExists() {
+    ViewParent v = getParent();
+    while (v != null) {
+      if (v instanceof AppBarLayout) {
+        return (AppBarLayout) v;
+      }
+      v = v.getParent();
+    }
+    return null;
   }
 
   private void initNavigationIcon() {
@@ -374,6 +413,10 @@ public class SearchBar extends Toolbar {
 
   @Override
   protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+    if (maxWidth >= 0 && maxWidth < MeasureSpec.getSize(widthMeasureSpec)) {
+      int measureMode = MeasureSpec.getMode(widthMeasureSpec);
+      widthMeasureSpec = MeasureSpec.makeMeasureSpec(maxWidth, measureMode);
+    }
     super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
     measureCenterView(widthMeasureSpec, heightMeasureSpec);
@@ -383,11 +426,20 @@ public class SearchBar extends Toolbar {
   protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
     super.onLayout(changed, left, top, right, bottom);
 
-    layoutCenterView();
+    if (centerView != null) {
+      layoutViewInCenter(centerView, /* overlapMenu= */ true);
+    }
     setHandwritingBoundsInsets();
-    // If after laying out, there's not enough space between the textview and the start of
-    // the searchbar, we add a margin.
     if (textView != null) {
+      // If the text is centered, we need to re-layout the textview in the center explicitly instead
+      // of using View gravities because a custom center view in the Toolbar will cause the textview
+      // to be pushed to the side. In this case, we want the textview to be still centered on top of
+      // any center views.
+      if (textCentered) {
+        layoutViewInCenter(textView, /* overlapMenu= */ false);
+      }
+      // If after laying out, there's not enough space between the textview and the start of
+      // the SearchBar, we add a margin.
       Toolbar.LayoutParams lp = (LayoutParams) textView.getLayoutParams();
       int currentMargin = lp.getMarginStart();
       int newMargin = getNewMargin(currentMargin);
@@ -417,6 +469,40 @@ public class SearchBar extends Toolbar {
     return additionalMarginStart;
   }
 
+  /**
+   * Sets whether the {@link SearchBar} lifts when a parent {@link AppBarLayout} lifts on scroll.
+   */
+  public void setLiftOnScroll(boolean liftOnScroll) {
+    this.liftOnScroll = liftOnScroll;
+    if (liftOnScroll) {
+      addLiftOnScrollProgressListener();
+    } else {
+      removeLiftOnScrollProgressListener();
+    }
+  }
+
+  /**
+   * Returns whether or not the {@link SearchBar} lifts when a parent {@link AppBarLayout} lifts
+   * on scroll.
+   */
+  public boolean isLiftOnScroll() {
+    return liftOnScroll;
+  }
+
+  private void addLiftOnScrollProgressListener() {
+    AppBarLayout appBarLayout = getAppBarLayoutParentIfExists();
+    if (appBarLayout != null && liftOnScrollColor != null) {
+      appBarLayout.addLiftOnScrollProgressListener(liftColorListener);
+    }
+  }
+
+  private void removeLiftOnScrollProgressListener() {
+    AppBarLayout appBarLayout = getAppBarLayoutParentIfExists();
+    if (appBarLayout != null) {
+      appBarLayout.removeLiftOnScrollProgressListener(liftColorListener);
+    }
+  }
+
   @Override
   protected void onAttachedToWindow() {
     super.onAttachedToWindow();
@@ -424,6 +510,15 @@ public class SearchBar extends Toolbar {
     MaterialShapeUtils.setParentAbsoluteElevation(this, backgroundShape);
     setDefaultMargins();
     setOrClearDefaultScrollFlags();
+    if (liftOnScroll) {
+      addLiftOnScrollProgressListener();
+    }
+  }
+
+  @Override
+  protected void onDetachedFromWindow() {
+    super.onDetachedFromWindow();
+    removeLiftOnScrollProgressListener();
   }
 
   /**
@@ -502,20 +597,46 @@ public class SearchBar extends Toolbar {
     }
   }
 
-  private void layoutCenterView() {
-    if (centerView == null) {
+  @Nullable
+  private ActionMenuView findOrGetMenuView() {
+    if (menuView == null) {
+      menuView = ToolbarUtils.getActionMenuView(this);
+    }
+    return menuView;
+  }
+
+  /**
+   * Lays out the given view in the center of the {@link SearchBar}.
+   *
+   * @param view The view to layout in the center.
+   * @param overlapMenu Whether the view can overlap the menu. This should be true if your centered
+   *     view should be absolute (eg. a product logo)
+   */
+  private void layoutViewInCenter(View view, boolean overlapMenu) {
+    if (view == null) {
       return;
     }
 
-    int centerViewWidth = centerView.getMeasuredWidth();
-    int left = getMeasuredWidth() / 2 - centerViewWidth / 2;
-    int right = left + centerViewWidth;
+    int viewWidth = view.getMeasuredWidth();
+    int left = getMeasuredWidth() / 2 - viewWidth / 2;
+    int right = left + viewWidth;
+    if (!overlapMenu) {
+      View menuView = findOrGetMenuView();
+      if (menuView != null) {
+        int diff =
+            getLayoutDirection() == LAYOUT_DIRECTION_RTL
+                ? max(menuView.getRight() - left, 0)
+                : max(right - menuView.getLeft(), 0);
+        left -= diff;
+        right -= diff;
+      }
+    }
 
-    int centerViewHeight = centerView.getMeasuredHeight();
-    int top = getMeasuredHeight() / 2 - centerViewHeight / 2;
-    int bottom = top + centerViewHeight;
+    int viewHeight = view.getMeasuredHeight();
+    int top = getMeasuredHeight() / 2 - viewHeight / 2;
+    int bottom = top + viewHeight;
 
-    layoutChild(centerView, left, top, right, bottom);
+    layoutChild(view, left, top, right, bottom);
   }
 
   private void layoutChild(View child, int left, int top, int right, int bottom) {
@@ -600,10 +721,8 @@ public class SearchBar extends Toolbar {
     Toolbar.LayoutParams lp = (LayoutParams) textView.getLayoutParams();
     if (textCentered) {
       textView.setGravity(Gravity.CENTER_HORIZONTAL);
-      lp.gravity = Gravity.CENTER_HORIZONTAL;
     } else {
       textView.setGravity(Gravity.NO_GRAVITY);
-      lp.gravity = Gravity.NO_GRAVITY;
     }
     textView.setLayoutParams(lp);
   }
@@ -850,6 +969,20 @@ public class SearchBar extends Toolbar {
 
   float getCompatElevation() {
     return backgroundShape != null ? backgroundShape.getElevation() : getElevation();
+  }
+
+  /** Sets the max width of SearchBar in pixels. **/
+  public void setMaxWidth(@Px int maxWidth) {
+    if (this.maxWidth != maxWidth) {
+      this.maxWidth = maxWidth;
+      requestLayout();
+    }
+  }
+
+  /** Get the max width of SearchBar in pixels. **/
+  @Px
+  public int getMaxWidth() {
+    return maxWidth;
   }
 
   /** Behavior that sets up the scroll-away mode for an {@link SearchBar}. */

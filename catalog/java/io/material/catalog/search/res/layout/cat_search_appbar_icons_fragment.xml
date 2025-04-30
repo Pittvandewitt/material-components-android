@@ -24,44 +24,53 @@
     android:id="@+id/app_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:fitsSystemWindows="true"
-    app:statusBarForeground="?attr/colorSurface">
+    android:fitsSystemWindows="true">
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_gravity="center_vertical">
-      <ImageView
-        android:id="@+id/product_logo"
+      <Button
+        android:id="@+id/cat_home_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         android:scaleType="center"
         android:layout_marginStart="4dp"
-        android:layout_marginEnd="8dp"
         android:contentDescription="@string/cat_searchbar_home_icon_description"
-        android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_home_default_24px"/>
+        style="?attr/materialIconButtonStyle"
+        app:icon="@drawable/ic_home_default_24px"/>
       <com.google.android.material.search.SearchBar
         android:id="@+id/cat_search_bar"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        app:layout_constraintLeft_toRightOf="@id/cat_home_button"
+        app:layout_constraintRight_toLeftOf="@id/cat_cast_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintWidth_max="312dp"
         android:layout_marginVertical="4dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:layout_gravity="center_vertical"
         app:defaultMarginsEnabled="false"
-        app:textCentered="true"
-        app:hideNavigationIcon="true"
         android:hint="@string/cat_searchbar_short_hint"/>
-      <ImageView
+      <Button
+        android:id="@+id/cat_cast_button"
         android:layout_width="48dp"
         android:layout_height="48dp"
         android:scaleType="center"
-        android:layout_marginStart="8dp"
         android:layout_marginEnd="4dp"
+        style="?attr/materialIconButtonStyle"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         android:contentDescription="@string/cat_searchbar_cast_icon_description"
         android:layout_gravity="center_vertical"
-        android:src="@drawable/ic_cast_vd_theme_24" />
-    </LinearLayout>
+        app:icon="@drawable/ic_cast_vd_theme_24" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
   </com.google.android.material.appbar.AppBarLayout>
 
@@ -71,13 +80,35 @@
     android:layout_height="match_parent"
     app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:orientation="vertical">
+    <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_gravity="center"
+      android:orientation="horizontal">
+      <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/cat_searchbar_menu_switch_title"/>
+    <com.google.android.material.materialswitch.MaterialSwitch
+      android:id="@+id/cat_search_bar_menu_switch"
+      android:layout_gravity="center_horizontal"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:padding="24dp" />
+    </LinearLayout>
+
     <TextView
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:layout_margin="16dp"
-      android:fitsSystemWindows="true"
       android:lineSpacingMultiplier="1.2"
       android:text="@string/cat_searchbar_lorem_ipsum"/>
+    </LinearLayout>
   </androidx.core.widget.NestedScrollView>
 
   <com.google.android.material.search.SearchView

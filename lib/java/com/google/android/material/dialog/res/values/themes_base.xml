@@ -33,6 +33,40 @@
     <item name="collapsingToolbarLayoutMediumStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Medium</item>
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Large</item>
 
+    <!--
+      Default as primary container FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
+      Please use the corresponding themeoverlay for other color variants via materialThemeOverlay.
+    -->
+    <item name="floatingActionButtonStyle">@style/Widget.Material3Expressive.FloatingActionButton</item>
+    <item name="floatingActionButtonMediumStyle">@style/Widget.Material3Expressive.FloatingActionButton.Medium</item>
+    <item name="floatingActionButtonLargeStyle">@style/Widget.Material3Expressive.FloatingActionButton.Large</item>
+
+    <!--
+      Default as primary container extended FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
+      Please use the corresponding themeoverlay for other color varaints via materialThemeOverlay.
+    -->
+    <item name="extendedFloatingActionButtonSmallStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Small</item>
+    <item name="extendedFloatingActionButtonMediumStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Medium</item>
+    <item name="extendedFloatingActionButtonLargeStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Large</item>
+
+    <item name="materialButtonStyle">@style/Widget.Material3Expressive.Button</item>
+    <item name="materialButtonTonalStyle">@style/Widget.Material3Expressive.Button.TonalButton</item>
+    <item name="materialButtonOutlinedStyle">@style/Widget.Material3Expressive.Button.OutlinedButton</item>
+    <item name="materialButtonElevatedStyle">@style/Widget.Material3Expressive.Button.ElevatedButton</item>
+    <item name="borderlessButtonStyle">@style/Widget.Material3Expressive.Button.TextButton</item>
+    <item name="buttonBarButtonStyle">@style/Widget.Material3Expressive.Button.TextButton.Dialog</item>
+    <item name="snackbarButtonStyle">@style/Widget.Material3Expressive.Button.TextButton.Snackbar</item>
+    <item name="materialIconButtonStyle">@style/Widget.Material3Expressive.Button.IconButton.Standard</item>
+    <item name="materialIconButtonOutlinedStyle">@style/Widget.Material3Expressive.Button.IconButton.Outlined</item>
+    <item name="materialIconButtonFilledStyle">@style/Widget.Material3Expressive.Button.IconButton.Filled</item>
+    <item name="materialIconButtonFilledTonalStyle">@style/Widget.Material3Expressive.Button.IconButton.Tonal</item>
+
+    <item name="materialButtonGroupStyle">@style/Widget.Material3Expressive.MaterialButtonGroup</item>
+    <item name="materialButtonToggleGroupStyle">@style/Widget.Material3Expressive.MaterialButtonToggleGroup</item>
+
+    <item name="bottomNavigationStyle">@style/Widget.Material3Expressive.BottomNavigationView</item>
+    <item name="navigationRailStyle">@style/Widget.Material3Expressive.NavigationRailView</item>
+
     <item name="toolbarStyle">@style/Widget.Material3Expressive.Toolbar</item>
     <item name="toolbarSurfaceStyle">@style/Widget.Material3Expressive.Toolbar.Surface</item>
 
@@ -49,6 +83,40 @@
     <item name="collapsingToolbarLayoutStyle">@style/Widget.Material3Expressive.CollapsingToolbar</item>
     <item name="collapsingToolbarLayoutMediumStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Medium</item>
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Large</item>
+
+    <!--
+      Default as primary container FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
+      Please use the corresponding themeoverlay for other color variants via materialThemeOverlay.
+    -->
+    <item name="floatingActionButtonStyle">@style/Widget.Material3Expressive.FloatingActionButton</item>
+    <item name="floatingActionButtonMediumStyle">@style/Widget.Material3Expressive.FloatingActionButton.Medium</item>
+    <item name="floatingActionButtonLargeStyle">@style/Widget.Material3Expressive.FloatingActionButton.Large</item>
+
+    <!--
+      Default as primary container extended FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
+      Please use the corresponding themeoverlay for other color varaints via materialThemeOverlay.
+    -->
+    <item name="extendedFloatingActionButtonSmallStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Small</item>
+    <item name="extendedFloatingActionButtonMediumStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Medium</item>
+    <item name="extendedFloatingActionButtonLargeStyle">@style/Widget.Material3Expressive.ExtendedFloatingActionButton.Large</item>
+
+    <item name="materialButtonStyle">@style/Widget.Material3Expressive.Button</item>
+    <item name="materialButtonTonalStyle">@style/Widget.Material3Expressive.Button.TonalButton</item>
+    <item name="materialButtonOutlinedStyle">@style/Widget.Material3Expressive.Button.OutlinedButton</item>
+    <item name="materialButtonElevatedStyle">@style/Widget.Material3Expressive.Button.ElevatedButton</item>
+    <item name="borderlessButtonStyle">@style/Widget.Material3Expressive.Button.TextButton</item>
+    <item name="buttonBarButtonStyle">@style/Widget.Material3Expressive.Button.TextButton.Dialog</item>
+    <item name="snackbarButtonStyle">@style/Widget.Material3Expressive.Button.TextButton.Snackbar</item>
+    <item name="materialIconButtonStyle">@style/Widget.Material3Expressive.Button.IconButton.Standard</item>
+    <item name="materialIconButtonOutlinedStyle">@style/Widget.Material3Expressive.Button.IconButton.Outlined</item>
+    <item name="materialIconButtonFilledStyle">@style/Widget.Material3Expressive.Button.IconButton.Filled</item>
+    <item name="materialIconButtonFilledTonalStyle">@style/Widget.Material3Expressive.Button.IconButton.Tonal</item>
+
+    <item name="materialButtonGroupStyle">@style/Widget.Material3Expressive.MaterialButtonGroup</item>
+    <item name="materialButtonToggleGroupStyle">@style/Widget.Material3Expressive.MaterialButtonToggleGroup</item>
+
+    <item name="bottomNavigationStyle">@style/Widget.Material3Expressive.BottomNavigationView</item>
+    <item name="navigationRailStyle">@style/Widget.Material3Expressive.NavigationRailView</item>
 
     <item name="toolbarStyle">@style/Widget.Material3Expressive.Toolbar</item>
     <item name="toolbarSurfaceStyle">@style/Widget.Material3Expressive.Toolbar.Surface</item>
@@ -168,6 +236,9 @@
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3.CollapsingToolbar.Large</item>
     <item name="drawerLayoutStyle">@style/Widget.Material3.DrawerLayout</item>
     <item name="extendedFloatingActionButtonStyle">?attr/extendedFloatingActionButtonPrimaryStyle</item>
+    <item name="extendedFloatingActionButtonSmallStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Small</item>
+    <item name="extendedFloatingActionButtonMediumStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Medium</item>
+    <item name="extendedFloatingActionButtonLargeStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Large</item>
     <item name="extendedFloatingActionButtonPrimaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary</item>
     <item name="extendedFloatingActionButtonSecondaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Secondary</item>
     <item name="extendedFloatingActionButtonTertiaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Tertiary</item>
@@ -182,6 +253,7 @@
     <item name="floatingActionButtonSmallSecondaryStyle">@style/Widget.Material3.FloatingActionButton.Small.Secondary</item>
     <item name="floatingActionButtonSmallTertiaryStyle">@style/Widget.Material3.FloatingActionButton.Small.Tertiary</item>
     <item name="floatingActionButtonSmallSurfaceStyle">@style/Widget.Material3.FloatingActionButton.Small.Surface</item>
+    <item name="floatingActionButtonMediumStyle">@style/Widget.Material3.FloatingActionButton.Medium</item>
     <item name="floatingActionButtonLargeStyle">?attr/floatingActionButtonLargePrimaryStyle</item>
     <item name="floatingActionButtonLargePrimaryStyle">@style/Widget.Material3.FloatingActionButton.Large.Primary</item>
     <item name="floatingActionButtonLargeSecondaryStyle">@style/Widget.Material3.FloatingActionButton.Large.Secondary</item>
@@ -461,6 +533,9 @@
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3.CollapsingToolbar.Large</item>
     <item name="drawerLayoutStyle">@style/Widget.Material3.DrawerLayout</item>
     <item name="extendedFloatingActionButtonStyle">?attr/extendedFloatingActionButtonPrimaryStyle</item>
+    <item name="extendedFloatingActionButtonSmallStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Small</item>
+    <item name="extendedFloatingActionButtonMediumStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Medium</item>
+    <item name="extendedFloatingActionButtonLargeStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Large</item>
     <item name="extendedFloatingActionButtonPrimaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Primary</item>
     <item name="extendedFloatingActionButtonSecondaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Secondary</item>
     <item name="extendedFloatingActionButtonTertiaryStyle">@style/Widget.Material3.ExtendedFloatingActionButton.Icon.Tertiary</item>
@@ -475,6 +550,7 @@
     <item name="floatingActionButtonSmallSecondaryStyle">@style/Widget.Material3.FloatingActionButton.Small.Secondary</item>
     <item name="floatingActionButtonSmallTertiaryStyle">@style/Widget.Material3.FloatingActionButton.Small.Tertiary</item>
     <item name="floatingActionButtonSmallSurfaceStyle">@style/Widget.Material3.FloatingActionButton.Small.Surface</item>
+    <item name="floatingActionButtonMediumStyle">@style/Widget.Material3.FloatingActionButton.Medium</item>
     <item name="floatingActionButtonLargeStyle">?attr/floatingActionButtonLargePrimaryStyle</item>
     <item name="floatingActionButtonLargePrimaryStyle">@style/Widget.Material3.FloatingActionButton.Large.Primary</item>
     <item name="floatingActionButtonLargeSecondaryStyle">@style/Widget.Material3.FloatingActionButton.Large.Secondary</item>
