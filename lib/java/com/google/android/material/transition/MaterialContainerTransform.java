@@ -906,8 +906,8 @@ public final class MaterialContainerTransform extends Transition {
     }
 
     // Improve the performance with lots of elements 
-    final View startView = TransitionUtils.copyViewImage(startValues.view);
-    final View endView = TransitionUtils.copyViewImage(endValues.view);
+    final View startView = copyViewImage(startValues.view);
+    final View endView = copyViewImage(endValues.view);
     final View drawingView;
     View boundingView;
     View drawingBaseView = endView.getParent() != null ? endView : startView;
@@ -918,8 +918,8 @@ public final class MaterialContainerTransform extends Transition {
       drawingView = findAncestorById(drawingBaseView, drawingViewId);
       boundingView = null;
     }
-    boundingView = TransitionUtils.copyViewImage(boundingView);
-    drawingBaseView = TransitionUtils.copyViewImage(drawingBaseView);
+    boundingView = copyViewImage(boundingView);
+    drawingBaseView = copyViewImage(drawingBaseView);
 
     // Calculate drawable bounds and offset start/end bounds as needed
     RectF drawingViewBounds = getLocationInWindow(drawingView);
