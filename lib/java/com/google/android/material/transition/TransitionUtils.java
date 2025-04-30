@@ -18,7 +18,9 @@ package com.google.android.material.transition;
 
 import android.animation.TimeInterpolator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.LinearGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -26,6 +28,7 @@ import android.graphics.Shader;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.ImageView;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
