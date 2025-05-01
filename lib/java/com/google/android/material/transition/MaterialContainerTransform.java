@@ -918,9 +918,7 @@ public final class MaterialContainerTransform extends Transition {
       drawingView = findAncestorById(drawingBaseView, drawingViewId);
       boundingView = null;
     }
-    boundingView = copyViewImage(boundingView);
-    drawingBaseView = copyViewImage(drawingBaseView);
-
+    
     // Calculate drawable bounds and offset start/end bounds as needed
     RectF drawingViewBounds = getLocationInWindow(drawingView);
     float offsetX = -drawingViewBounds.left;
