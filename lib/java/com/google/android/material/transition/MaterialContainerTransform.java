@@ -905,18 +905,14 @@ public final class MaterialContainerTransform extends Transition {
       return null;
     }
 
-    // Improve the performance with copyViewImage
-    final View startView = copyViewImage(startValues.view);
-    final View endView = copyViewImage(endValues.view);
+    final View startView = startValues.view;
+    final View endView = endValues.view;
     final View drawingView;
     View boundingView;
     View drawingBaseView = endView.getParent() != null ? endView : startView;
     if (drawingViewId == drawingBaseView.getId()) {
       drawingView = (View) drawingBaseView.getParent();
       boundingView = drawingBaseView;
-    } else if (drawingViewId == android.R.id.content) {
-      drawingView = findViewById(drawingViewId);
-      boundingView = null;
     } else {
       drawingView = findAncestorById(drawingBaseView, drawingViewId);
       boundingView = null;
@@ -941,11 +937,11 @@ public final class MaterialContainerTransform extends Transition {
     final TransitionDrawable transitionDrawable =
         new TransitionDrawable(
             getPathMotion(),
-            startView,
+            copyViewImage(startView),
             startBounds,
             startShapeAppearanceModel,
             getElevationOrDefault(startElevation, startView),
-            endView,
+            copyViewImage(endView),
             endBounds,
             endShapeAppearanceModel,
             getElevationOrDefault(endElevation, endView),
