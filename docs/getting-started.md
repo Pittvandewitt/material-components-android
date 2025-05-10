@@ -77,11 +77,9 @@ In order to use the latest versions of Material Components for Android and the
 AndroidX Jetpack libraries, you will have to install the latest version of
 Android Studio and update your app to meet the following requirements:
 
--   `compileSdkVersion` -> `34` or later (see the
-    [Android 14 app migration guide](https://developer.android.com/about/versions/14/migration))
--   `minSdkVersion` -> `19` or later (see this
-    [AndroidX blog post](https://android-developers.googleblog.com/2023/10/androidx-minsdkversion-19.html)
-    for more info)
+-   `compileSdkVersion` -> `35` or later (see the
+    [Android 15 app migration guide](https://developer.android.com/about/versions/15/migration))
+-   `minSdkVersion` -> `21` or later
 
 ## 4. Java 8 compilation
 
@@ -92,13 +90,13 @@ for more information on Java 8 support and how to enable it for your app.
 
 ## 5. Gradle, AGP, and Android Studio
 
-When using MDC-Android version `1.7.0` and above, you will need to make sure
-your project is built with the following minimum requirements, in order to
-support the latest build features such as XML `macro`:
+When using MDC-Android version `1.13.0` and above, you will need to
+make sure your project is built with the following minimum requirements, in
+order to support the latest build features such as XML `macro`:
 
--   [Gradle version 7.3.3](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)
--   [Android Gradle Plugin (AGP) version 7.2.0](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)
--   [Android Studio Chipmunk, version 2021.2.1](https://developer.android.com/studio/releases/gradle-plugin#android_gradle_plugin_and_android_studio_compatibility)
+-   [Gradle version 8.9](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)
+-   [Android Gradle Plugin (AGP) version 8.7.3](https://developer.android.com/studio/releases/gradle-plugin#updating-gradle)
+-   [Android Studio Ladybug, version 2024.2.1](https://developer.android.com/studio/releases/gradle-plugin#android_gradle_plugin_and_android_studio_compatibility)
 
 ## 6. `AppCompatActivity`
 

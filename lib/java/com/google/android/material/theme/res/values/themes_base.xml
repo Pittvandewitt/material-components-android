@@ -33,9 +33,12 @@
     <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3Expressive.MaterialAlertDialog</item>
 
     <!-- Widget styles. -->
+    <item name="appBarLayoutStyle">@style/Widget.Material3Expressive.AppBarLayout</item>
     <item name="collapsingToolbarLayoutStyle">@style/Widget.Material3Expressive.CollapsingToolbar</item>
     <item name="collapsingToolbarLayoutMediumStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Medium</item>
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Large</item>
+
+    <item name="materialSearchBarStyle">@style/Widget.Material3Expressive.SearchBar</item>
 
     <!--
       Default as primary container FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
@@ -73,6 +76,11 @@
 
     <item name="toolbarStyle">@style/Widget.Material3Expressive.Toolbar</item>
     <item name="toolbarSurfaceStyle">@style/Widget.Material3Expressive.Toolbar.Surface</item>
+
+    <item name="linearProgressIndicatorStyle">@style/Widget.Material3Expressive.LinearProgressIndicator</item>
+    <item name="circularProgressIndicatorStyle">@style/Widget.Material3Expressive.CircularProgressIndicator</item>
+
+    <item name="sliderStyle">@style/Widget.Material3Expressive.Slider.Xsmall</item>
 
     <!-- Top App Bars. -->
     <item name="collapsingToolbarLayoutMediumSize">@dimen/m3_comp_app_bar_medium_flexible_container_height</item>
@@ -91,9 +99,12 @@
     <item name="materialAlertDialogTheme">@style/ThemeOverlay.Material3Expressive.MaterialAlertDialog</item>
 
     <!-- Widget styles. -->
+    <item name="appBarLayoutStyle">@style/Widget.Material3Expressive.AppBarLayout</item>
     <item name="collapsingToolbarLayoutStyle">@style/Widget.Material3Expressive.CollapsingToolbar</item>
     <item name="collapsingToolbarLayoutMediumStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Medium</item>
     <item name="collapsingToolbarLayoutLargeStyle">@style/Widget.Material3Expressive.CollapsingToolbar.Large</item>
+
+    <item name="materialSearchBarStyle">@style/Widget.Material3Expressive.SearchBar</item>
 
     <!--
       Default as primary container FABs. Unlisted FAB style attributes are not updated in Material3Expressive.
@@ -131,6 +142,11 @@
 
     <item name="toolbarStyle">@style/Widget.Material3Expressive.Toolbar</item>
     <item name="toolbarSurfaceStyle">@style/Widget.Material3Expressive.Toolbar.Surface</item>
+
+    <item name="linearProgressIndicatorStyle">@style/Widget.Material3Expressive.LinearProgressIndicator</item>
+    <item name="circularProgressIndicatorStyle">@style/Widget.Material3Expressive.CircularProgressIndicator</item>
+
+    <item name="sliderStyle">@style/Widget.Material3Expressive.Slider.Xsmall</item>
 
     <!-- Top App Bars. -->
     <item name="collapsingToolbarLayoutMediumSize">@dimen/m3_comp_app_bar_medium_flexible_container_height</item>
@@ -295,6 +311,8 @@
     <item name="materialButtonElevatedStyle">@style/Widget.Material3.Button.ElevatedButton</item>
     <item name="materialButtonGroupStyle">@style/Widget.Material3.MaterialButtonGroup</item>
     <item name="materialSplitButtonStyle">@style/Widget.Material3.MaterialSplitButton</item>
+    <item name="materialSplitButtonLeadingFilledStyle">@style/Widget.Material3.SplitButton.LeadingButton.Filled</item>
+    <item name="materialSplitButtonLeadingFilledTonalStyle">@style/Widget.Material3.SplitButton.LeadingButton.Filled.Tonal</item>
     <item name="materialSplitButtonIconFilledStyle">@style/Widget.Material3.SplitButton.IconButton.Filled</item>
     <item name="materialSplitButtonIconFilledTonalStyle">@style/Widget.Material3.SplitButton.IconButton.Filled.Tonal</item>
     <item name="materialButtonToggleGroupStyle">@style/Widget.Material3.MaterialButtonToggleGroup</item>
@@ -608,6 +626,8 @@
     <item name="materialButtonElevatedStyle">@style/Widget.Material3.Button.ElevatedButton</item>
     <item name="materialButtonGroupStyle">@style/Widget.Material3.MaterialButtonGroup</item>
     <item name="materialSplitButtonStyle">@style/Widget.Material3.MaterialSplitButton</item>
+    <item name="materialSplitButtonLeadingFilledStyle">@style/Widget.Material3.SplitButton.LeadingButton.Filled</item>
+    <item name="materialSplitButtonLeadingFilledTonalStyle">@style/Widget.Material3.SplitButton.LeadingButton.Filled.Tonal</item>
     <item name="materialSplitButtonIconFilledStyle">@style/Widget.Material3.SplitButton.IconButton.Filled</item>
     <item name="materialSplitButtonIconFilledTonalStyle">@style/Widget.Material3.SplitButton.IconButton.Filled.Tonal</item>
     <item name="materialButtonToggleGroupStyle">@style/Widget.Material3.MaterialButtonToggleGroup</item>
