@@ -18,7 +18,9 @@ package com.google.android.material.transition;
 
 import android.animation.TimeInterpolator;
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.graphics.LinearGradient;
 import android.graphics.Rect;
 import android.graphics.RectF;
@@ -26,6 +28,7 @@ import android.graphics.Shader;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewParent;
+import android.widget.ImageView;
 import androidx.annotation.AttrRes;
 import androidx.annotation.ColorInt;
 import androidx.annotation.FloatRange;
@@ -49,12 +52,54 @@ class TransitionUtils {
   static final int NO_DURATION = -1;
   @AttrRes static final int NO_ATTR_RES_ID = 0;
 
+  private static final int MAX_IMAGE_SIZE = 1024 * 1024;
+  
   // Constants corresponding to motionPath theme attr enum values.
   private static final int PATH_TYPE_LINEAR = 0;
   private static final int PATH_TYPE_ARC = 1;
 
   private TransitionUtils() {}
 
+  static View copyViewImage(View view) {
+        Matrix matrix = new Matrix();
+        matrix.setTranslate(-view.getScrollX(), -view.getScrollY());
+        RectF bounds = new RectF(0, 0, view.getWidth(), view.getHeight());
+        matrix.mapRect(bounds);
+        int left = Math.round(bounds.left);
+        int top = Math.round(bounds.top);
+        int right = Math.round(bounds.right);
+        int bottom = Math.round(bounds.bottom);
+        ImageView copy = new ImageView(view.getContext());
+        copy.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        Bitmap bitmap = createViewBitmap(view, matrix, bounds);
+        if (bitmap != null) {
+            copy.setImageBitmap(bitmap);
+        }
+        int widthSpec = View.MeasureSpec.makeMeasureSpec(right - left, View.MeasureSpec.EXACTLY);
+        int heightSpec = View.MeasureSpec.makeMeasureSpec(bottom - top, View.MeasureSpec.EXACTLY);
+        copy.measure(widthSpec, heightSpec);
+        copy.layout(left, top, right, bottom);
+        return copy;
+    }
+
+  private static Bitmap createViewBitmap(View view, Matrix matrix, RectF bounds) {
+        Bitmap bitmap = null;
+        int bitmapWidth = Math.round(bounds.width());
+        int bitmapHeight = Math.round(bounds.height());
+        if (bitmapWidth > 0 && bitmapHeight > 0) {
+            float scale = Math.min(1f, ((float) MAX_IMAGE_SIZE) / (bitmapWidth * bitmapHeight));
+            bitmapWidth = (int) (bitmapWidth * scale);
+            bitmapHeight = (int) (bitmapHeight * scale);
+            matrix.postTranslate(-bounds.left, -bounds.top);
+            matrix.postScale(scale, scale);
+            bitmap = Bitmap.createBitmap(bitmapWidth, bitmapHeight, Bitmap.Config.ARGB_8888);
+            Canvas canvas = new Canvas(bitmap);
+            canvas.concat(matrix);
+            view.draw(canvas);
+        }
+        return bitmap;
+    }
+  
   static boolean maybeApplyThemeInterpolator(
       Transition transition,
       Context context,

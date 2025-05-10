@@ -22,6 +22,7 @@ import static androidx.annotation.RestrictTo.Scope.LIBRARY_GROUP;
 import static androidx.core.util.Preconditions.checkNotNull;
 import static com.google.android.material.transition.TransitionUtils.calculateArea;
 import static com.google.android.material.transition.TransitionUtils.convertToRelativeCornerSizes;
+import static com.google.android.material.transition.TransitionUtils.copyViewImage;
 import static com.google.android.material.transition.TransitionUtils.createColorShader;
 import static com.google.android.material.transition.TransitionUtils.defaultIfNull;
 import static com.google.android.material.transition.TransitionUtils.findAncestorById;
@@ -916,7 +917,7 @@ public final class MaterialContainerTransform extends Transition {
       drawingView = findAncestorById(drawingBaseView, drawingViewId);
       boundingView = null;
     }
-
+    
     // Calculate drawable bounds and offset start/end bounds as needed
     RectF drawingViewBounds = getLocationInWindow(drawingView);
     float offsetX = -drawingViewBounds.left;
@@ -936,11 +937,11 @@ public final class MaterialContainerTransform extends Transition {
     final TransitionDrawable transitionDrawable =
         new TransitionDrawable(
             getPathMotion(),
-            startView,
+            copyViewImage(startView),
             startBounds,
             startShapeAppearanceModel,
             getElevationOrDefault(startElevation, startView),
-            endView,
+            copyViewImage(endView),
             endBounds,
             endShapeAppearanceModel,
             getElevationOrDefault(endElevation, endView),
@@ -971,21 +972,11 @@ public final class MaterialContainerTransform extends Transition {
           }
         });
 
-    addListener(
-        new TransitionListenerAdapter() {
-          @Override
-          public void onTransitionStart(@NonNull Transition transition) {
-            // Add the transition drawable to the root ViewOverlay
-            ViewUtils.getOverlay(drawingView).add(transitionDrawable);
+    animator.addListener(
+        new Animator.AnimatorListener() {
 
-            // Hide the actual views at the beginning of the transition
-            startView.setAlpha(0);
-            endView.setAlpha(0);
-          }
-
-          @Override
-          public void onTransitionEnd(@NonNull Transition transition) {
-            removeListener(this);
+          void showTransitionEnd() {
+            animator.removeListener(this);
             if (holdAtEndEnabled) {
               // Keep drawable showing and views hidden (useful for Activity return transitions)
               return;
@@ -997,6 +988,29 @@ public final class MaterialContainerTransform extends Transition {
             // Remove the transition drawable from the root ViewOverlay
             ViewUtils.getOverlay(drawingView).remove(transitionDrawable);
           }
+
+          @Override
+          public void onAnimationStart(@NonNull Animator animation) {
+            // Add the transition drawable to the root ViewOverlay
+            ViewUtils.getOverlay(drawingView).add(transitionDrawable);
+
+            // Hide the actual views at the beginning of the transition
+            startView.setAlpha(0);
+            endView.setAlpha(0);
+          }
+
+          @Override
+          public void onAnimationEnd(@NonNull Animator animation) {
+            showTransitionEnd();
+          }
+
+          @Override
+          public void onAnimationCancel(@NonNull Animator animation) {
+            showTransitionEnd();
+          }
+
+          @Override
+          public void onAnimationRepeat(@NonNull Animator animation) {}
         });
 
     return animator;
@@ -1571,5 +1585,10 @@ public final class MaterialContainerTransform extends Transition {
       this.scaleMask = scaleMask;
       this.shapeMask = shapeMask;
     }
+  }
+
+  @Override
+  public boolean isSeekingSupported() {
+    return true;
   }
 }

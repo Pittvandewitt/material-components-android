@@ -54,6 +54,7 @@ import androidx.annotation.StyleRes;
 import androidx.customview.view.AbsSavedState;
 import com.google.android.material.badge.BadgeDrawable;
 import com.google.android.material.drawable.DrawableUtils;
+import com.google.android.material.floatingtoolbar.FloatingToolbarLayout;
 import com.google.android.material.internal.ThemeEnforcement;
 import com.google.android.material.resources.MaterialResources;
 import com.google.android.material.shape.MaterialShapeDrawable;
@@ -75,7 +76,7 @@ import java.lang.annotation.RetentionPolicy;
  * used for programmatically selecting which destination is currently active. It can be done using
  * {@code MenuItem#setChecked(true)}
  */
-public abstract class NavigationBarView extends FrameLayout {
+public abstract class NavigationBarView extends FloatingToolbarLayout {
 
   /**
    * Label behaves as "labeled" when there are 3 items or less, or "selected" when there are 4 items
